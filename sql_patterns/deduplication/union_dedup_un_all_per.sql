@@ -79,6 +79,26 @@ values
 (5,'Phoenix','Eve'),
 (6,'Boston','Frank');
 
+/**
+    Solution:
+    Implemented both union and union all and understood the difference
+    between them. Union will run both the select statements and return the
+    intermediate result set and then removes the duplicated records based 
+    on the query plan but generally duplicates are figured out based on the
+    combination of values from all the columns in the select statement and
+    discards the duplicated values.
+
+    In case of union all it runs both the select statements and returns
+    the intermediate result which contains duplicated records.
+
+    In performance wise use union all and try to deduplicate after
+    the union all will be the best approach for deduplication.
+
+    For the below usage of both union and union all gives the same 
+    result because the combination of values from all the columns are
+    unique.
+**/
+
 WITH cte_union_all AS (
     SELECT 
     id,
@@ -95,4 +115,22 @@ SELECT
 FROM deduplication.source_b
 )
 SELECT * FROM cte_union_all order by id;
+
+
+WITH cte_union AS (
+    SELECT 
+    id,
+    name,
+    city,
+    'source_a' AS source
+FROM deduplication.source_a
+UNION 
+SELECT
+    id,
+    name,
+    city,
+    'source_b' AS source       
+FROM deduplication.source_b
+)
+SELECT * FROM cte_union order by id;
  
